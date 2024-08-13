@@ -13,6 +13,10 @@ use App\Http\Controllers\Api\IndicadorLogroController;
 
 use App\Http\Controllers\Api\MatriculaController;
 
+use App\Http\Controllers\PDFController;
+use App\Http\Controllers\NominaNormalController;
+use App\Http\Controllers\NominaUgelController;
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -72,3 +76,10 @@ Route::post('/matricula',[MatriculaController::class,'store']);
 Route::put('/matricula/{id}',[MatriculaController::class, 'update']);
 Route::patch('/matricula/{id}',[MatriculaController::class, 'updateParcial']);
 Route::delete('/matricula/{id}',[MatriculaController::class, 'destroy']);
+
+
+// REPORTE EN PDF
+
+Route::get('/generate-nomina-pdf', [PDFController::class, 'generateNominaPDF']);
+Route::get('/nominaNormal-pdf', [NominaNormalController::class, 'generateNominaPDF']);
+Route::get('/generate-pdf', [NominaUgelController::class, 'generatePDF']);

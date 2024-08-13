@@ -29,10 +29,20 @@ class EstudianteController extends Controller
 
         return response()->json($data, 200);
     }
+
     public function store(Request $request)
     {
+        // Obtener el año actual en formato YY (últimos dos dígitos)
+        $year = date('y');
+
+        // Obtener el siguiente ID disponible en la tabla 'estudiante'
+        $nextId = Estudiante::max('id') + 1;
+
+        // Generar el 'codigo_estudiante' combinando el año y el siguiente ID, rellenando con ceros a la izquierda
+        $codigo_estudiante = $year . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
+        // Validación de datos (sin el campo codigo_estudiante como requerido)
         $validator = Validator::make($request->all(), [
-            'codigo_estudiante' => 'required|string|max:6|unique:estudiante,codigo_estudiante',
             'nombre' => 'required|string|max:45',
             'apellido_paterno' => 'required|string|max:45',
             'apellido_materno' => 'required|string|max:45',
@@ -53,8 +63,9 @@ class EstudianteController extends Controller
             return response()->json($data, 400);
         }
 
+        // Crear el nuevo estudiante con el 'codigo_estudiante' generado
         $Estudiante = Estudiante::create([
-            "codigo_estudiante" => $request->codigo_estudiante,
+            "codigo_estudiante" => $codigo_estudiante, // Aquí se usa el código generado
             "nombre" => $request->nombre,
             "apellido_paterno" => $request->apellido_paterno,
             "apellido_materno" => $request->apellido_materno,
@@ -79,8 +90,9 @@ class EstudianteController extends Controller
         ];
 
         return response()->json($data, 201);
-
     }
+
+
 
     public function findOneEstudent($id)
     {
@@ -138,14 +150,14 @@ class EstudianteController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'codigo_estudiante' => 'string|max:6|unique:estudiante,codigo_estudiante',
+            'codigo_estudiante' => 'string|max:6|unique:estudiante,codigo_estudiante,' . $Estudiante->id,
             'nombre' => 'string|max:45',
             'apellido_paterno' => 'string|max:45',
             'apellido_materno' => 'string|max:45',
-            'dni' => 'string|max:8|unique:estudiante,dni',
+            'dni' => 'string|max:8|unique:estudiante,dni,' . $Estudiante->id,
             'sexo' => 'string|max:1',
             'celular' => 'string|max:9',
-            'correo' => 'string|email|max:60|unique:estudiante,correo',
+            'correo' => 'string|email|max:60|unique:estudiante,correo,' . $Estudiante->id,
             'fecha_nacimiento' => 'date'
         ]);
 
@@ -169,6 +181,7 @@ class EstudianteController extends Controller
 
         return response()->json($data, 200);
     }
+
 
     public function updateParcial(Request $request, $id)
     {
@@ -250,5 +263,4 @@ class EstudianteController extends Controller
 
         return response()->json($data, 200);
     }
-
 }
