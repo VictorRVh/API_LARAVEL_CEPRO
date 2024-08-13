@@ -17,5 +17,6 @@ class Docente extends Model
         'sexo',
         'celular',
         'correo',
+        'fecha_nacimiento'
     ];
 }

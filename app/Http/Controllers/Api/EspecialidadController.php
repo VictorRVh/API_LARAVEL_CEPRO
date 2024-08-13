@@ -36,9 +36,17 @@ class EspecialidadController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {   // Obtener el año actual en formato YY (últimos dos dígitos)
+        $keyId = 'ES';
+
+        // Obtener el siguiente ID disponible en la tabla 'estudiante'
+        $nextId = Especialidad::max('id') + 1;
+
+        // Generar el 'codigo_estudiante' combinando el año y el siguiente ID, rellenando con ceros a la izquierda
+        $id_unidad = $keyId . str_pad($nextId, 2, '0', STR_PAD_LEFT);
+
         $validator = Validator::make($request->all(), [
-            'id_unidad' => 'required|string|max:4|unique:especialidad,id_unidad',
+            //'id_unidad' => 'required|string|max:4|unique:especialidad,id_unidad',
             'programa_estudio' => 'required|string|max:100|unique:especialidad,programa_estudio',
             'ciclo_formativo' => 'string|max:50|nullable',
             'modalidad' => 'string|max:45|nullable',
@@ -47,7 +55,8 @@ class EspecialidadController extends Controller
             'docente_id' => 'string|max:8|nullable|exists:docente,dni',
             'periodo_academico' => 'string|max:10|nullable',
             'hora_semanal' => 'integer|nullable',
-            'seccion' => 'string|max:5|nullable'
+            'seccion' => 'string|max:5|nullable',
+            'turno' => 'string|max:1|nullable'
         ]);
 
         if ($validator->fails()) {
@@ -60,7 +69,8 @@ class EspecialidadController extends Controller
             return response()->json($data, 400);
         }
 
-        $specialties = Especialidad::create($request->all());
+        // Crear la especialidad
+        $specialties = Especialidad::create(array_merge($request->all(), ['id_unidad' => $id_unidad]));
 
         if (!$specialties) {
             $data = [

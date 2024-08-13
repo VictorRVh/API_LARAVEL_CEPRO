@@ -33,6 +33,7 @@ Route::delete('/students/{id}',[EstudianteController::class, 'destroy']);
 // Router teacher
 
 Route::get('/teacher',[DocenteController::class,'index']);
+Route::get('/teacherName',[DocenteController::class,'indexName']);
 Route::get('/teacher/{id}',[DocenteController::class, 'findOneDocente']);
 Route::post('/teacher',[DocenteController::class,'store']);
 Route::put('/teacher/{id}',[DocenteController::class, 'update']);

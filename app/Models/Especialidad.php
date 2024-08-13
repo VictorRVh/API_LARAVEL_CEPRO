@@ -22,7 +22,8 @@ class Especialidad extends Model
         'docente_id',
         'periodo_academico',
         'hora_semanal',
-        'seccion'
+        'seccion',
+        'turno'
     ];
     public function docente()
     {
