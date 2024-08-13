@@ -30,27 +30,6 @@ class DocenteController extends Controller
 
         return response()->json($data, 200);
     }
-    //metodo GetDocenteNombreApellidos
-    public function indexName()
-        {
-            $teachers = Docente::select('dni', 'nombre', 'apellido_paterno', 'apellido_materno')->get();
-
-            if ($teachers->isEmpty()) {
-                $data = [
-                    'message' => "No se encontraron datos",
-                    'status' => 404
-                ];
-                return response()->json($data, 404);
-            }
-
-            $data = [
-                'teachers' => $teachers,
-                'status' => 200
-            ];
-
-            return response()->json($data, 200);
-        }
-
 
     public function store(Request $request)
     {
@@ -129,10 +108,10 @@ class DocenteController extends Controller
             'nombre' => 'string|max:255',
             'apellido_paterno' => 'string|max:60',
             'apellido_materno' => 'string|max:60',
-            'dni' => 'string|max:8|unique:docente,dni,',
+            'dni' => 'string|max:8|unique:docente,dni,' . $teacher->id,
             'sexo' => 'string|max:1',
             'celular' => 'string|max:9',
-            'correo' => 'string|email|max:255|unique:docente,correo,'
+            'correo' => 'string|email|max:255|unique:docente,correo,' . $teacher->id 
         ]);
 
         if ($validator->fails()) {

@@ -11,6 +11,8 @@ use App\Models\Especialidad;
 use App\Models\IndicadorLogro;
 use App\Models\UnidadDidactica;
 
+use Illuminate\Validation\Rule;
+
 
 class EspecialidadController extends Controller
 {
@@ -36,17 +38,8 @@ class EspecialidadController extends Controller
     }
 
     public function store(Request $request)
-    {   // Obtener el año actual en formato YY (últimos dos dígitos)
-        $keyId = 'ES';
-
-        // Obtener el siguiente ID disponible en la tabla 'estudiante'
-        $nextId = Especialidad::max('id') + 1;
-
-        // Generar el 'codigo_estudiante' combinando el año y el siguiente ID, rellenando con ceros a la izquierda
-        $id_unidad = $keyId . str_pad($nextId, 2, '0', STR_PAD_LEFT);
-
+    {
         $validator = Validator::make($request->all(), [
-            //'id_unidad' => 'required|string|max:4|unique:especialidad,id_unidad',
             'programa_estudio' => 'required|string|max:100|unique:especialidad,programa_estudio',
             'ciclo_formativo' => 'string|max:50|nullable',
             'modalidad' => 'string|max:45|nullable',
@@ -60,33 +53,47 @@ class EspecialidadController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $data = [
+            return response()->json([
                 'message' => 'Error en la validación de los datos',
                 'errors' => $validator->errors(),
                 'status' => 400
-            ];
-
-            return response()->json($data, 400);
+            ], 400);
         }
 
-        // Crear la especialidad
-        $specialties = Especialidad::create(array_merge($request->all(), ['id_unidad' => $id_unidad]));
+        try {
+            // Generar el próximo id_unidad en el formato ES00, ES01, ES02
+            $lastSpecialty = Especialidad::orderBy('id_unidad', 'desc')->first();
+            $nextIdNumber = 0;
 
-        if (!$specialties) {
-            $data = [
+            if ($lastSpecialty) {
+                $lastId = $lastSpecialty->id_unidad;
+                $lastIdNumber = intval(substr($lastId, 2));
+                $nextIdNumber = $lastIdNumber + 1;
+            }
+
+            // Generar el siguiente id_unidad en formato ES00
+            $nextId = 'ES' . str_pad($nextIdNumber, 2, '0', STR_PAD_LEFT);
+
+            // Crear la especialidad con el nuevo id_unidad
+            $especialidadData = $request->all();
+            $especialidadData['id_unidad'] = $nextId;
+
+            $specialties = Especialidad::create($especialidadData);
+
+            return response()->json([
+                'especialidad' => $specialties,
+                'status' => 201
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
                 'message' => 'Error al crear la especialidad',
+                'error' => $e->getMessage(),
                 'status' => 500
-            ];
-            return response()->json($data, 500);
+            ], 500);
         }
-
-        $data = [
-            'especialidad' => $specialties,
-            'status' => 201
-        ];
-
-        return response()->json($data, 201);
     }
+
+
 
     public function findOne($id)
     {
@@ -133,19 +140,22 @@ class EspecialidadController extends Controller
 
     public function update(Request $request, $id)
     {
-        $specialties = Especialidad::find($id);
+        $especialidad = Especialidad::find($id);
 
-        if (!$specialties) {
-            $data = [
+        if (!$especialidad) {
+            return response()->json([
                 'message' => 'Especialidad no encontrada',
                 'status' => 404
-            ];
-            return response()->json($data, 404);
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
-            'id_unidad' => 'string|max:4|unique:especialidad,id_unidad',
-            'programa_estudio' => 'string|max:100|unique:especialidad,programa_estudio',
+            'programa_estudio' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('especialidad', 'programa_estudio')->ignore($id)
+            ],
             'ciclo_formativo' => 'string|max:50|nullable',
             'modalidad' => 'string|max:45|nullable',
             'modulo_formativo' => 'string|max:200|nullable',
@@ -153,28 +163,33 @@ class EspecialidadController extends Controller
             'docente_id' => 'string|max:8|nullable|exists:docente,dni',
             'periodo_academico' => 'string|max:10|nullable',
             'hora_semanal' => 'integer|nullable',
-            'seccion' => 'string|max:5|nullable'
+            'seccion' => 'string|max:5|nullable',
+            'turno' => 'string|max:1|nullable'
         ]);
 
         if ($validator->fails()) {
-            $data = [
+            return response()->json([
                 'message' => 'Error en la validación de los datos',
                 'errors' => $validator->errors(),
                 'status' => 400
-            ];
-
-            return response()->json($data, 400);
+            ], 400);
         }
 
-        $specialties->update($request->all());
+        try {
+            // Actualizar la especialidad
+            $especialidad->update($request->all());
 
-        $data = [
-            'message' => 'Especialidad actualizada',
-            'especialidad' => $specialties,
-            'status' => 200
-        ];
-
-        return response()->json($data, 200);
+            return response()->json([
+                'especialidad' => $especialidad,
+                'status' => 200
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar la especialidad',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
     }
 
     public function updateParcial(Request $request, $id)

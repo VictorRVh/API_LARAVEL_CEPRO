@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('unidad_didactica', function (Blueprint $table) {
             $table->id();
-            $table->char('id_indicador', 4)->unique();
+            $table->char('id_indicador', 8)->unique();
             $table->char('especialidad_id', 4)->nullable();
             $table->string('nombre_unidad', 130)->nullable();
             $table->date('fecha_inicio')->nullable();

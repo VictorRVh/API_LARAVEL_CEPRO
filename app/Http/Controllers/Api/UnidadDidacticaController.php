@@ -32,7 +32,6 @@ class UnidadDidacticaController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id_indicador' => 'required|string|max:4|unique:unidad_didactica,id_indicador',
             'especialidad_id' => 'nullable|string|max:4|exists:especialidad,id_unidad',
             'nombre_unidad' => 'nullable|string|max:130',
             'fecha_inicio' => 'nullable|date',
@@ -44,31 +43,47 @@ class UnidadDidacticaController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $data = [
+            return response()->json([
                 'message' => 'Error en la validación de los datos',
                 'errors' => $validator->errors(),
                 'status' => 400
-            ];
-            return response()->json($data, 400);
+            ], 400);
         }
 
-        $unidadDidactica = UnidadDidactica::create($request->all());
+        // Obtener el último id_indicador usado para la especialidad dada
+        $especialidadId = $request->input('especialidad_id');
+        $lastUnidadDidactica = UnidadDidactica::where('especialidad_id', $especialidadId)
+            ->orderBy('id_indicador', 'desc')
+            ->first();
+
+        $nextNumber = 0;
+        if ($lastUnidadDidactica) {
+            // Extraer el último número usado y sumar 1
+            $lastIdIndicador = $lastUnidadDidactica->id_indicador;
+            $nextNumber = intval(substr($lastIdIndicador, -2)) + 1;
+        }
+
+        // Formatear el próximo número
+        $nextNumberFormatted = str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
+        $idIndicador = $especialidadId . 'UD' . $nextNumberFormatted;
+
+        // Crear la unidad didáctica con el nuevo id_indicador
+        $unidadDidactica = UnidadDidactica::create(array_merge($request->all(), ['id_indicador' => $idIndicador]));
 
         if (!$unidadDidactica) {
-            $data = [
+            return response()->json([
                 'message' => 'Error al crear la unidad didáctica',
                 'status' => 500
-            ];
-            return response()->json($data, 500);
+            ], 500);
         }
 
-        $data = [
+        return response()->json([
             'unidad_didactica' => $unidadDidactica,
             'status' => 201
-        ];
-
-        return response()->json($data, 201);
+        ], 201);
     }
+
+
 
     public function findOne($id)
     {

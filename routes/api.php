@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\UnidadDidacticaController;
 use App\Http\Controllers\Api\IndicadorLogroController;
 
 use App\Http\Controllers\Api\MatriculaController;
+use App\Http\Controllers\api\ExperienciaFormativaController;
 
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\NominaNormalController;
@@ -77,6 +78,14 @@ Route::post('/matricula',[MatriculaController::class,'store']);
 Route::put('/matricula/{id}',[MatriculaController::class, 'update']);
 Route::patch('/matricula/{id}',[MatriculaController::class, 'updateParcial']);
 Route::delete('/matricula/{id}',[MatriculaController::class, 'destroy']);
+
+// EXPERIENCIA FORMATIVA
+
+Route::get('/experiencia_formativa',[ExperienciaFormativaController::class,'index']);
+Route::get('/experiencia_formativa/{id}',[ExperienciaFormativaController::class, 'findOne']);
+Route::post('/experiencia_formativa',[ExperienciaFormativaController::class,'store']);
+Route::put('/experiencia_formativa/{id}',[ExperienciaFormativaController::class, 'update']);
+Route::delete('/experiencia_formativa/{id}',[ExperienciaFormativaController::class, 'destroy']);
 
 
 // REPORTE EN PDF
