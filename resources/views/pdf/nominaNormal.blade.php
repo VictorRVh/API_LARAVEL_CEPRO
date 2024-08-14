@@ -50,7 +50,6 @@
         .image-container {
             margin-left: 200px;
         }
-
     </style>
 </head>
 
@@ -92,9 +91,11 @@
         <tbody>
             @foreach($studentData as $student)
             <tr>
-                @foreach($student as $item)
-                <td>{{ $item }}</td>
-                @endforeach
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $student->Codigo_Matricula }}</td>
+                <td>{{ $student->Apellidos_Nombres }}</td>
+                <td>{{ $student->Sexo }}</td>
+                <td>{{ $student->Fecha_Nacimiento }}</td>
             </tr>
             @endforeach
         </tbody>

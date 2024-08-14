@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Matricula;
+
+use Illuminate\Support\Facades\DB;
 
 class NominaNormalController extends Controller
 {
@@ -20,13 +23,16 @@ class NominaNormalController extends Controller
             [["FECHA DE INICIO:", "18/03/2024"], ["FECHA DE TÉRMINO:", "19/07/2024"], ["TURNO:", "NOCHE"], ["SECCIÓN:", "ÚNICA"]]
         ];
 
-        $studentData = [
-            ["01", "71090436", "ANDRADE MARICHIN, Azucena Lisbeth", "M", "16/01/1956", "G", "06", "20"],
-            ["02", "40903648", "ARCE BASILIO, Elba Celia", "M", "12/08/1954", "G", "06", "20"],
-            ["03", "6160967", "BENTOCILLA NAVARRO, Emma Ana", "M", "18/10/1954", "G", "06", "20"],
-            ["04", "07507489", "CANCHA LLACOLLA, Carla", "M", "01/09/1960", "G", "06", "20"],
-            ["05", "08432894", "CANDIA TAIPE, Dionicia", "M", "31/01/1962", "G", "06", "20"]
-        ];
+        $studentData = DB::table('matricula')
+            ->join('estudiante', 'matricula.codigo_estudiante_id', '=', 'estudiante.codigo_estudiante')
+            ->select(
+                'matricula.codigo_estudiante_id as Codigo_Matricula',
+                DB::raw("CONCAT(estudiante.apellido_paterno, ' ', estudiante.apellido_materno, ' ', estudiante.nombre) as Apellidos_Nombres"),
+                'estudiante.sexo as Sexo',
+                'estudiante.fecha_nacimiento as Fecha_Nacimiento'
+            )
+            ->get();
+
 
         $pdf = Pdf::loadView('pdf.nominaNormal', compact('data', 'studentData'))
             ->setPaper('a4', 'portrait');

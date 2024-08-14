@@ -19,7 +19,7 @@ class EspecialidadController extends Controller
     //
     public function index()
     {
-        $specialties = Especialidad::all();
+        $specialties = Especialidad::with('docente')->get();
 
         if ($specialties->isEmpty()) {
             $data = [
@@ -29,12 +29,30 @@ class EspecialidadController extends Controller
             return response()->json($data, 404);
         }
 
-        $data = [
-            'especialidades' => $specialties,
-            'status' => 200
-        ];
+        // Mapear las especialidades para incluir el nombre completo del docente
+        $specialties = $specialties->map(function ($especialidad) {
+            return [
+                'id' => $especialidad->id,
+                'id_unidad' => $especialidad->id_unidad,
+                'programa_estudio' => $especialidad->programa_estudio,
+                'ciclo_formativo' => $especialidad->ciclo_formativo,
+                'modalidad' => $especialidad->modalidad,
+                'modulo_formativo' => $especialidad->modulo_formativo,
+                'descripcion_especialidad' => $especialidad->descripcion_especialidad,
+                'docente_nombre_completo' => $especialidad->docente ? $especialidad->docente->nombre . ' ' . $especialidad->docente->apellido_paterno . ' ' . $especialidad->docente->apellido_materno : null,
+                'periodo_academico' => $especialidad->periodo_academico,
+                'hora_semanal' => $especialidad->hora_semanal,
+                'seccion' => $especialidad->seccion,
+                'turno' => $especialidad->tuno
+            ];
+        });
 
-        return response()->json($data, 200);
+        // $data = [
+        //     'especialidades' => $specialties,
+        //     'status' => 200
+        // ];
+
+        return response()->json($specialties, 200);
     }
 
     public function store(Request $request)
@@ -97,9 +115,9 @@ class EspecialidadController extends Controller
 
     public function findOne($id)
     {
-        $specialties = Especialidad::find($id);
+        $especialidad = Especialidad::with('docente')->find($id);
 
-        if (!$specialties) {
+        if (!$especialidad) {
             $data = [
                 'message' => 'Especialidad no encontrada',
                 'status' => 404
@@ -108,12 +126,24 @@ class EspecialidadController extends Controller
         }
 
         $data = [
-            'especialidad' => $specialties,
+            'id' => $especialidad->id,
+            'id_unidad' => $especialidad->id_unidad,
+            'programa_estudio' => $especialidad->programa_estudio,
+            'ciclo_formativo' => $especialidad->ciclo_formativo,
+            'modalidad' => $especialidad->modalidad,
+            'modulo_formativo' => $especialidad->modulo_formativo,
+            'descripcion_especialidad' => $especialidad->descripcion_especialidad,
+            'docente_nombre_completo' => $especialidad->docente ? $especialidad->docente->nombre . ' ' . $especialidad->docente->apellido_paterno . ' ' . $especialidad->docente->apellido_materno : null,
+            'periodo_academico' => $especialidad->periodo_academico,
+            'hora_semanal' => $especialidad->hora_semanal,
+            'seccion' => $especialidad->seccion,
+            'turno' => $especialidad->tuno,
             'status' => 200
         ];
 
         return response()->json($data, 200);
     }
+
 
     public function destroy($id)
     {
