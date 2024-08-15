@@ -31,7 +31,6 @@ Route::put('/students/{id}',[EstudianteController::class, 'update']);
 Route::patch('/students/{id}',[EstudianteController::class, 'updateParcial']);
 Route::delete('/students/{id}',[EstudianteController::class, 'destroy']);
 
-// Router teacher
 
 Route::get('/teacher',[DocenteController::class,'index']);
 Route::get('/teacherName',[DocenteController::class,'indexName']);
