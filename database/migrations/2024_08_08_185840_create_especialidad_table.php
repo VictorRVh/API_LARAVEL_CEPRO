@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('periodo_academico', 10)->nullable();
             $table->integer('hora_semanal')->nullable();
             $table->string('seccion', 5)->nullable();
-            $table->string('tuno', 1)->nullable();
+            $table->string('turno', 1)->nullable();
             $table->foreign('docente_id')->references('dni')->on('docente')->onDelete('cascade');
             $table->timestamps();
         });

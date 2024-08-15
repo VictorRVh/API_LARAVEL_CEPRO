@@ -17,6 +17,9 @@ use Illuminate\Validation\Rule;
 class EspecialidadController extends Controller
 {
     //
+    public function NameEspecialidad(){
+        
+    }
     public function index()
     {
         $specialties = Especialidad::with('docente')->get();
@@ -39,7 +42,7 @@ class EspecialidadController extends Controller
                 'modalidad' => $especialidad->modalidad,
                 'modulo_formativo' => $especialidad->modulo_formativo,
                 'descripcion_especialidad' => $especialidad->descripcion_especialidad,
-                'docente_nombre_completo' => $especialidad->docente ? $especialidad->docente->nombre . ' ' . $especialidad->docente->apellido_paterno . ' ' . $especialidad->docente->apellido_materno : null,
+                'docente_id' => $especialidad->docente ? $especialidad->docente->nombre . ' ' . $especialidad->docente->apellido_paterno . ' ' . $especialidad->docente->apellido_materno : null,
                 'periodo_academico' => $especialidad->periodo_academico,
                 'hora_semanal' => $especialidad->hora_semanal,
                 'seccion' => $especialidad->seccion,
@@ -47,12 +50,12 @@ class EspecialidadController extends Controller
             ];
         });
 
-        // $data = [
-        //     'especialidades' => $specialties,
-        //     'status' => 200
-        // ];
+         $data = [
+            'especialidades' => $specialties,
+            'status' => 200
+         ];
 
-        return response()->json($specialties, 200);
+        return response()->json($data, 200);
     }
 
     public function store(Request $request)
@@ -99,7 +102,7 @@ class EspecialidadController extends Controller
             $specialties = Especialidad::create($especialidadData);
 
             return response()->json([
-                'especialidad' => $specialties,
+                'especialidad' => $especialidadData['id_unidad'],
                 'status' => 201
             ], 201);
         } catch (\Exception $e) {

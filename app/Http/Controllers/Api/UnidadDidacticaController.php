@@ -78,7 +78,7 @@ class UnidadDidacticaController extends Controller
         }
 
         return response()->json([
-            'unidad_didactica' => $unidadDidactica,
+            'unidad_didactica' => $idIndicador,
             'status' => 201
         ], 201);
     }

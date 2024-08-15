@@ -32,7 +32,7 @@ class IndicadorLogroController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'descripcion' => 'string|max:300|nullable',
-            'unidad_didactica_id' => 'required|string|max:4|exists:unidad_didactica,id_indicador'
+            'unidad_didactica_id' => 'required|string|max:8|exists:unidad_didactica,id_indicador'
         ]);
 
         if ($validator->fails()) {
