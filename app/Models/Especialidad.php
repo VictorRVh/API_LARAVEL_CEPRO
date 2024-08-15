@@ -29,4 +29,14 @@ class Especialidad extends Model
     {
         return $this->belongsTo(Docente::class, 'docente_id', 'dni');
     }
+
+    public function unidadesDidacticas()
+    {
+        return $this->hasMany(UnidadDidactica::class, 'especialidad_id', 'id_unidad');
+    }
+
+    public function matriculas()
+    {
+        return $this->hasMany(Matricula::class, 'programa_estudio_id', 'programa_estudio');
+    }
 }

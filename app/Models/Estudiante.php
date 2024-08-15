@@ -21,4 +21,9 @@ class Estudiante extends Model
         'correo',
         'fecha_nacimiento'
     ];
+
+    public function matricula()
+    {
+        return $this->hasOne(Matricula::class, 'codigo_estudiante_id', 'codigo_estudiante');
+    }
 }

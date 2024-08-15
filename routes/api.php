@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\IndicadorLogroController;
 
 use App\Http\Controllers\Api\MatriculaController;
 use App\Http\Controllers\api\ExperienciaFormativaController;
-
+use App\Http\Controllers\FichaMatricula;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\NominaNormalController;
 use App\Http\Controllers\NominaUgelController;
@@ -93,3 +93,13 @@ Route::delete('/experiencia_formativa/{id}',[ExperienciaFormativaController::cla
 Route::get('/generate-nomina-pdf', [PDFController::class, 'generateNominaPDF']);
 Route::get('/nominaNormal-pdf', [NominaNormalController::class, 'generateNominaPDF']);
 Route::get('/generate-pdf', [NominaUgelController::class, 'generatePDF']);
+
+
+// API PARA FICHA DE MATRICULA
+Route::get('fichaMatricula/{codigo}', [FichaMatricula::class, 'getEstudianteWithEspecialidadAndUnidades']);
+
+// API PARA LISTA DE ESTUDIANTES
+Route::get('/especialidad/{especialidadId}/estudiantes', [FichaMatricula::class, 'getEstudiantesPorEspecialidad']);
+
+// API PARA REGISTRO DE MATRICULA INSTITUCIONAL
+Route::get('/registro/estudiantes', [FichaMatricula::class, 'getRegistroMatricula']);
