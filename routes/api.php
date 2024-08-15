@@ -69,7 +69,7 @@ Route::put('/indicador_logro/{id}',[IndicadorLogroController::class, 'update']);
 Route::patch('/indicador_logro/{id}',[IndicadorLogroController::class, 'updateParcial']);
 Route::delete('/indicador_logro/{id}',[IndicadorLogroController::class, 'destroy']);
 
-// MAtricula
+// MAtriculaindicador_logro
 
 Route::get('/matricula',[MatriculaController::class,'index']);
 Route::get('/matricula/{id}',[MatriculaController::class, 'findOne']);

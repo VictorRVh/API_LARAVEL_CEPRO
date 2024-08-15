@@ -94,10 +94,12 @@ class EstudianteController extends Controller
 
 
 
-    public function findOneEstudent($id)
+    public function findOneEstudent($dni)
     {
-        $Estudiante = Estudiante::find($id);
+        // Busca al estudiante por su DNI en lugar de ID
+        $Estudiante = Estudiante::where('dni', $dni)->first();
 
+        // Verifica si se encontró al estudiante
         if (!$Estudiante) {
             $data = [
                 'message' => 'Estudiante no encontrado',
@@ -113,6 +115,7 @@ class EstudianteController extends Controller
 
         return response()->json($data, 200);
     }
+
 
     public function destroy($id)
     {

@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('indicador_logro', function (Blueprint $table) {
             $table->id();
             $table->string('descripcion', 300)->nullable();
-            $table->char('unidad_didactica_id', 4)->nullable();
+            $table->char('unidad_didactica_id', 8)->nullable();
             $table->timestamps();
             $table->foreign('unidad_didactica_id')->references('id_indicador')->on('unidad_didactica');
         });
