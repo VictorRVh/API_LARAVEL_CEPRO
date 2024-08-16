@@ -101,4 +101,4 @@ Route::get('fichaMatricula/{codigo}', [FichaMatricula::class, 'getEstudianteWith
 Route::get('/especialidad/{especialidadId}/estudiantes', [FichaMatricula::class, 'getEstudiantesPorEspecialidad']);
 
 // API PARA REGISTRO DE MATRICULA INSTITUCIONAL
-Route::get('/registro/estudiantes', [FichaMatricula::class, 'getRegistroMatricula']);
+Route::get('/registro/estudiantes/{especialidadId}', [FichaMatricula::class, 'getRegistroMatriculaPorNombre']);

@@ -46,7 +46,7 @@ class EspecialidadController extends Controller
                 'periodo_academico' => $especialidad->periodo_academico,
                 'hora_semanal' => $especialidad->hora_semanal,
                 'seccion' => $especialidad->seccion,
-                'turno' => $especialidad->tuno
+                'turno' => $especialidad->turno
             ];
         });
 
@@ -140,7 +140,7 @@ class EspecialidadController extends Controller
             'periodo_academico' => $especialidad->periodo_academico,
             'hora_semanal' => $especialidad->hora_semanal,
             'seccion' => $especialidad->seccion,
-            'turno' => $especialidad->tuno,
+            'turno' => $especialidad->turno,
             'status' => 200
         ];
 
