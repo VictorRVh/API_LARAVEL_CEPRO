@@ -91,9 +91,9 @@ class DocenteController extends Controller
         return response()->json($data, 201);
     }
 
-    public function findOneDocente($id)
+    public function findOneDocente($dni)
     {
-        $teacher = Docente::find($id);
+        $teacher = Docente::where('dni',$dni)->first();
 
         if (!$teacher) {
             $data = [
@@ -111,9 +111,9 @@ class DocenteController extends Controller
         return response()->json($data, 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $dni)
     {
-        $teacher = Docente::find($id);
+        $teacher = Docente::where($dni,'dni')->first();
 
         if (!$teacher) {
             $data = [
@@ -154,9 +154,9 @@ class DocenteController extends Controller
         return response()->json($data, 200);
     }
 
-    public function destroy($id)
+    public function destroy($dni)
     {
-        $teacher = Docente::find($id);
+        $teacher = Docente::where('dni',$dni)->first();
 
         if (!$teacher) {
             $data = [
@@ -177,9 +177,9 @@ class DocenteController extends Controller
         return response()->json($data, 200);
     }
 
-    public function updateParcial(Request $request, $id)
+    public function updateParcial(Request $request, $dni)
     {
-        $teacher = Docente::find($id);
+        $teacher = Docente::where('dni',$dni)->first();
 
         if (!$teacher) {
             $data = [
@@ -194,10 +194,10 @@ class DocenteController extends Controller
             'nombre' => 'string|max:255',
             'apellido_paterno' => 'string|max:60',
             'apellido_materno' => 'string|max:60',
-            'dni' => 'string|max:8|unique:docente,dni,' . $id,
+            'dni' => 'string|max:8|unique:docente,dni,' . $dni,
             'sexo' => 'string|max:1',
             'celular' => 'string|max:9',
-            'correo' => 'string|email|max:255|unique:docente,correo,' . $id
+            'correo' => 'string|email|max:255|unique:docente,correo,' . $dni
         ]);
 
         if ($validator->fails()) {
