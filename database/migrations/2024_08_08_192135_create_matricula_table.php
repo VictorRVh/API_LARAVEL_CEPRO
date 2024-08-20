@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('matricula', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo_estudiante_id', 6)->nullable();
+            $table->string('codigo_estudiante_id', 8)->nullable();
            // $table->char('codigo_matricula',6)->unique();
             $table->char('turno', 1)->nullable();
             $table->char('condicion', 1)->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             //$table->string('docente_id', 8)->nullable();
             $table->string('numero_recibo', 10)->unique();
             //$table->dateTime('fecha_matricula')->nullable();
-            $table->foreign('codigo_estudiante_id')->references('codigo_estudiante')->on('estudiante');
+            $table->foreign('codigo_estudiante_id')->references('dni')->on('estudiante');
             $table->foreign('programa_estudio_id')->references('programa_estudio')->on('especialidad');
             //$table->foreign('docente_id')->references('dni')->on('docente');
             $table->timestamps();

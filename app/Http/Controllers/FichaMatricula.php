@@ -5,20 +5,27 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Estudiante;
 use App\Models\Especialidad;
+use App\Models\Matricula;
 
 class FichaMatricula extends Controller
 {
     public function getEstudianteWithEspecialidadAndUnidades($codigoEstudiante)
     {
-        $estudiante = Estudiante::with(['matricula.especialidad.unidadesDidacticas'])
-            ->where('codigo_estudiante', $codigoEstudiante)
-            ->first();
+        // Obtener todas las matrículas del estudiante
+        $matriculas = Matricula::where('codigo_estudiante_id', $codigoEstudiante)
+            ->with(['especialidad.unidadesDidacticas'])
+            ->get();
 
-        if (!$estudiante) {
-            return response()->json(['error' => 'Estudiante no encontrado'], 404);
+        // Si no se encuentra ninguna matrícula, retornar un error
+        if ($matriculas->isEmpty()) {
+            return response()->json(['error' => 'Estudiante no encontrado o sin matrículas'], 404);
         }
 
-        $especialidad = $estudiante->matricula->especialidad;
+        // Obtener la matrícula más reciente
+        $matriculaReciente = $matriculas->sortByDesc('created_at')->first();
+
+        // Obtener la especialidad y unidades didácticas de la matrícula más reciente
+        $especialidad = $matriculaReciente->especialidad;
         $unidadesDidacticas = $especialidad->unidadesDidacticas;
 
         // Obtener el nombre de las unidades didácticas en un solo string
@@ -34,10 +41,10 @@ class FichaMatricula extends Controller
 
         // Mapea la información que deseas enviar en la respuesta
         $response = [
-            'codigo_estudiante' => $estudiante->codigo_estudiante,
-            'nombre_completo' => $estudiante->nombre . ' ' . $estudiante->apellido_paterno . ' ' . $estudiante->apellido_materno,
-            'correo' => $estudiante->correo,
-            'dni' => $estudiante->dni,
+            'codigo_estudiante' => $matriculaReciente->codigo_estudiante_id,
+            'nombre_completo' => $matriculaReciente->estudiante->nombre . ' ' . $matriculaReciente->estudiante->apellido_paterno . ' ' . $matriculaReciente->estudiante->apellido_materno,
+            'correo' => $matriculaReciente->estudiante->correo,
+            'dni' => $matriculaReciente->estudiante->dni,
             'especialidad' => [
                 'nombre' => $especialidad->programa_estudio,
                 'docente' => $especialidad->docente ? $especialidad->docente->nombre . ' ' . $especialidad->docente->apellido_paterno . ' ' . $especialidad->docente->apellido_materno : 'No disponible',
@@ -72,7 +79,7 @@ class FichaMatricula extends Controller
     }
 
 
-    public function getEstudiantesPorEspecialidad($especialidadId)
+    public function getEstudiantesPorEspecialidad($especialidadId, $turno)
     {
         $especialidad = Especialidad::with(['matriculas.estudiante', 'unidadesDidacticas'])
             ->where('programa_estudio', $especialidadId)
@@ -82,6 +89,11 @@ class FichaMatricula extends Controller
             return response()->json(['error' => 'Especialidad no encontrada'], 404);
         }
 
+        // Filtrar las matrículas por turno
+        $matriculas = $especialidad->matriculas->filter(function ($matricula) use ($turno) {
+            return $matricula->turno === $turno;
+        });
+
         // Calcular el total de unidades didácticas y la suma de créditos
         $totalUnidadesDidacticas = $especialidad->unidadesDidacticas->count();
         $sumaCreditos = $especialidad->unidadesDidacticas->sum('credito_unidad');
@@ -90,32 +102,31 @@ class FichaMatricula extends Controller
         $fechaInicio = $especialidad->unidadesDidacticas->min('fecha_inicio');
         $fechaFin = $especialidad->unidadesDidacticas->max('fecha_final');
 
-        // Concatenar los nombres de las unidades didácticas en un string
-        $nombresUnidades = $especialidad->unidadesDidacticas->pluck('nombre_unidad')->implode(', ');
+        // Asegúrate de que 'estudiantes' siempre sea un arreglo
+        $estudiantes = $matriculas->map(function ($matricula) {
+            return [
+                'codigo_matricula' => $matricula->codigo_estudiante_id,
+                'condicion' => $matricula->condicion,
+                'apellidos_nombres' => $matricula->estudiante->apellido_paterno . ' ' . $matricula->estudiante->apellido_materno . ' ' . $matricula->estudiante->nombre,
+                'sexo' => $matricula->estudiante->sexo,
+                'fecha_nacimiento' => $matricula->estudiante->fecha_nacimiento,
+            ];
+        })->values()->toArray(); // Convertir a arreglo
 
         $response = [
             'nombre_especialidad' => $especialidad->programa_estudio,
+            'modulo_formativo' => $especialidad->modulo_formativo,
             'turno' => $especialidad->turno,
             'seccion' => $especialidad->seccion,
             'total_unidades_didacticas' => $totalUnidadesDidacticas,
             'suma_creditos' => $sumaCreditos,
             'fecha_inicio' => $fechaInicio,
             'fecha_fin' => $fechaFin,
-            'nombres_unidades_didacticas' => $nombresUnidades,
-            'estudiantes' => $especialidad->matriculas->map(function ($matricula) {
-                return [
-                    'codigo_matricula' => $matricula->codigo_estudiante_id,
-                    'apellidos_nombres' => $matricula->estudiante->apellido_paterno . ' ' . $matricula->estudiante->apellido_materno . ' ' . $matricula->estudiante->nombre,
-                    'sexo' => $matricula->estudiante->sexo,
-                    'fecha_nacimiento' => $matricula->estudiante->fecha_nacimiento,
-                ];
-            })
+            'estudiantes' => $estudiantes // Asegúrate de que esto siempre sea un arreglo
         ];
 
         return response()->json($response);
     }
-
-
 
 
     public function getRegistroMatriculaPorNombre($nombreEspecialidad)
@@ -128,11 +139,10 @@ class FichaMatricula extends Controller
             return response()->json(['error' => 'Especialidad no encontrada'], 404);
         }
 
-        $unidadesDidacticas = $especialidad->unidadesDidacticas->pluck('nombre_unidad')->implode(', ');
-
         $response = [
             'nombre_especialidad' => $especialidad->programa_estudio,
-            'estudiantes' => $especialidad->matriculas->map(function ($matricula) use ($unidadesDidacticas) {
+            'modulo_formativo' => $especialidad->modulo_formativo,
+            'estudiantes' => $especialidad->matriculas->map(function ($matricula) {
                 return [
                     'codigo_estudiante' => $matricula->estudiante->codigo_estudiante,
                     'dni' => $matricula->estudiante->dni,
@@ -141,7 +151,6 @@ class FichaMatricula extends Controller
                     'nombre' => $matricula->estudiante->nombre,
                     'sexo' => $matricula->estudiante->sexo,
                     'fecha_nacimiento' => $matricula->estudiante->fecha_nacimiento,
-                    'unidades_didacticas' => $unidadesDidacticas,
                 ];
             })
         ];

@@ -30,10 +30,19 @@ class DocenteController extends Controller
 
         return response()->json($data, 200);
     }
-//metodo GetDocenteNombreApellidos
+    //metodo GetDocenteNombreApellidos
     public function indexName()
     {
-        $teachers = Docente::select('dni', 'nombre', 'apellido_paterno', 'apellido_materno')->get();
+        // Obtén los docentes asignados a una especialidad
+        $assignedTeachers = Docente::join('especialidad', 'docente.dni', '=', 'especialidad.docente_id')
+            ->select('docente.dni')
+            ->distinct()
+            ->pluck('dni');
+
+        // Obtén los docentes que no están asignados a ninguna especialidad
+        $teachers = Docente::select('dni', 'nombre', 'apellido_paterno', 'apellido_materno')
+            ->whereNotIn('dni', $assignedTeachers)
+            ->get();
 
         if ($teachers->isEmpty()) {
             $data = [
@@ -50,6 +59,7 @@ class DocenteController extends Controller
 
         return response()->json($data, 200);
     }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -93,7 +103,7 @@ class DocenteController extends Controller
 
     public function findOneDocente($dni)
     {
-        $teacher = Docente::where('dni',$dni)->first();
+        $teacher = Docente::where('dni', $dni)->first();
 
         if (!$teacher) {
             $data = [
@@ -113,7 +123,7 @@ class DocenteController extends Controller
 
     public function update(Request $request, $dni)
     {
-        $teacher = Docente::where($dni,'dni')->first();
+        $teacher = Docente::where($dni, 'dni')->first();
 
         if (!$teacher) {
             $data = [
@@ -130,7 +140,7 @@ class DocenteController extends Controller
             'dni' => 'string|max:8|unique:docente,dni,' . $teacher->id,
             'sexo' => 'string|max:1',
             'celular' => 'string|max:9',
-            'correo' => 'string|email|max:255|unique:docente,correo,' . $teacher->id 
+            'correo' => 'string|email|max:255|unique:docente,correo,' . $teacher->id
         ]);
 
         if ($validator->fails()) {
@@ -156,7 +166,7 @@ class DocenteController extends Controller
 
     public function destroy($dni)
     {
-        $teacher = Docente::where('dni',$dni)->first();
+        $teacher = Docente::where('dni', $dni)->first();
 
         if (!$teacher) {
             $data = [
@@ -179,7 +189,7 @@ class DocenteController extends Controller
 
     public function updateParcial(Request $request, $dni)
     {
-        $teacher = Docente::where('dni',$dni)->first();
+        $teacher = Docente::where('dni', $dni)->first();
 
         if (!$teacher) {
             $data = [

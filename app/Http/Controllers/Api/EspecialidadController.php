@@ -61,7 +61,7 @@ class EspecialidadController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'programa_estudio' => 'required|string|max:100|unique:especialidad,programa_estudio',
+            'programa_estudio' => 'required|string|max:100',
             'ciclo_formativo' => 'string|max:50|nullable',
             'modalidad' => 'string|max:45|nullable',
             'modulo_formativo' => 'string|max:200|nullable',

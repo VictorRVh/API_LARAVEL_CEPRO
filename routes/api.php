@@ -95,10 +95,10 @@ Route::get('/generate-pdf', [NominaUgelController::class, 'generatePDF']);
 
 
 // API PARA FICHA DE MATRICULA
-Route::get('fichaMatricula/{codigo}', [FichaMatricula::class, 'getEstudianteWithEspecialidadAndUnidades']);
+Route::get('/fichaMatricula/{codigo}', [FichaMatricula::class, 'getEstudianteWithEspecialidadAndUnidades']);
 
 // API PARA LISTA DE ESTUDIANTES
-Route::get('/especialidad/{especialidadId}/estudiantes', [FichaMatricula::class, 'getEstudiantesPorEspecialidad']);
+Route::get('/especialidad/{especialidadId}/estudiantes/{turno}', [FichaMatricula::class, 'getEstudiantesPorEspecialidad']);
 
 // API PARA REGISTRO DE MATRICULA INSTITUCIONAL
 Route::get('/registro/estudiantes/{especialidadId}', [FichaMatricula::class, 'getRegistroMatriculaPorNombre']);

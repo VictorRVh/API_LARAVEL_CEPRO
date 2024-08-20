@@ -24,6 +24,6 @@ class Estudiante extends Model
 
     public function matricula()
     {
-        return $this->hasOne(Matricula::class, 'codigo_estudiante_id', 'codigo_estudiante');
+        return $this->hasOne(Matricula::class, 'codigo_estudiante_id', 'dni');
     }
 }

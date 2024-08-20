@@ -20,7 +20,7 @@ class Matricula extends Model
 
     public function estudiante()
     {
-        return $this->belongsTo(Estudiante::class, 'codigo_estudiante_id', 'codigo_estudiante');
+        return $this->belongsTo(Estudiante::class, 'codigo_estudiante_id', 'dni');
     }
 
     public function especialidad()
