@@ -123,7 +123,7 @@ class DocenteController extends Controller
 
     public function update(Request $request, $dni)
     {
-        $teacher = Docente::where($dni, 'dni')->first();
+        $teacher = Docente::where('dni', $dni)->first();
 
         if (!$teacher) {
             $data = [

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('hora_semanal')->nullable();
             $table->string('seccion', 5)->nullable();
             $table->string('turno', 1)->nullable();
-            $table->foreign('docente_id')->references('dni')->on('docente')->onDelete('cascade');
+            $table->foreign('docente_id')->references('dni')->on('docente')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
