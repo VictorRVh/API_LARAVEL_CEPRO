@@ -140,11 +140,12 @@ class EstudianteController extends Controller
         return response()->json($data, 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $dni)
     {
-        $Estudiante = Estudiante::find($id);
+        // Busca al estudiante por DNI en lugar de ID
+        $estudiante = Estudiante::where('dni', $dni)->first();
 
-        if (!$Estudiante) {
+        if (!$estudiante) {
             $data = [
                 'message' => 'Estudiante no encontrado',
                 'status' => 404
@@ -153,14 +154,14 @@ class EstudianteController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'codigo_estudiante' => 'string|max:6|unique:estudiante,codigo_estudiante,' . $Estudiante->id,
+            'codigo_estudiante' => 'string|max:6|unique:estudiante,codigo_estudiante,' . $estudiante->id,
             'nombre' => 'string|max:45',
             'apellido_paterno' => 'string|max:45',
             'apellido_materno' => 'string|max:45',
-            'dni' => 'string|max:8|unique:estudiante,dni,' . $Estudiante->id,
+            'dni' => 'string|max:8|unique:estudiante,dni,' . $estudiante->id,
             'sexo' => 'string|max:1',
             'celular' => 'string|max:9',
-            'correo' => 'string|email|max:60|unique:estudiante,correo,' . $Estudiante->id,
+            'correo' => 'string|email|max:60|unique:estudiante,correo,' . $estudiante->id,
             'fecha_nacimiento' => 'date'
         ]);
 
@@ -174,16 +175,17 @@ class EstudianteController extends Controller
             return response()->json($data, 400);
         }
 
-        $Estudiante->update($request->all());
+        $estudiante->update($request->all());
 
         $data = [
             'message' => 'Estudiante actualizado',
-            'Estudiante' => $Estudiante,
+            'estudiante' => $estudiante,
             'status' => 200
         ];
 
         return response()->json($data, 200);
     }
+
 
 
     public function updateParcial(Request $request, $id)
