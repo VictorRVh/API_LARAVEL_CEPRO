@@ -102,3 +102,6 @@ Route::get('/especialidad/{especialidadId}/estudiantes/{turno}', [FichaMatricula
 
 // API PARA REGISTRO DE MATRICULA INSTITUCIONAL
 Route::get('/registro/estudiantes/{especialidadId}', [FichaMatricula::class, 'getRegistroMatriculaPorNombre']);
+
+// API PARA MOSTRAR DATOS DE ESTUDIANTES POR ESPECIALIDAD
+Route::get('/especialidad/{especialidadId}/students/{turno}', [FichaMatricula::class, 'getEstudiantesPorEspecialidadYTurno']);

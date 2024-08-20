@@ -157,4 +157,40 @@ class FichaMatricula extends Controller
 
         return response()->json($response);
     }
+
+    public function getEstudiantesPorEspecialidadYTurno($especialidadId, $turno)
+    {
+        // Encontrar la especialidad por ID
+        $especialidad = Especialidad::where('programa_estudio', $especialidadId)
+            ->first();
+
+        if (!$especialidad) {
+            return response()->json(['error' => 'Especialidad no encontrada'], 404);
+        }
+
+        // Obtener las matrículas que coinciden con la especialidad y el turno
+        $estudiantes = Matricula::with('estudiante')
+            ->where('programa_estudio_id', $especialidadId)
+            ->where('turno', $turno)
+            ->get()
+            ->map(function ($matricula) {
+                return [
+                    'codigo_estudiante' => $matricula->estudiante->codigo_estudiante,
+                    'dni' => $matricula->estudiante->dni,
+                    'apellido_paterno' => $matricula->estudiante->apellido_paterno,
+                    'apellido_materno' => $matricula->estudiante->apellido_materno,
+                    'nombre' => $matricula->estudiante->nombre,
+                    'sexo' => $matricula->estudiante->sexo,
+                    'fecha_nacimiento' => $matricula->estudiante->fecha_nacimiento,
+                    'celular' => $matricula->estudiante->celular,
+                    'correo' => $matricula->estudiante->correo,
+                ];
+            })->toArray(); // Convertir a arreglo
+
+        return response()->json([
+            'especialidad' => $especialidad->programa_estudio,
+            'turno' => $turno,
+            'estudiantes' => $estudiantes
+        ]);
+    }
 }
