@@ -117,11 +117,11 @@ class EstudianteController extends Controller
     }
 
 
-    public function destroy($id)
+    public function destroy($dni)
     {
-        $Estudiante = Estudiante::find($id);
+        $estudiante = Estudiante::where('dni', $dni)->first();
 
-        if (!$Estudiante) {
+        if (!$estudiante) {
             $data = [
                 'message' => 'Estudiante no encontrado',
                 'status' => 404
@@ -130,7 +130,7 @@ class EstudianteController extends Controller
             return response()->json($data, 404);
         }
 
-        $Estudiante->delete();
+        $estudiante->delete();
 
         $data = [
             'message' => 'Estudiante eliminado',
@@ -142,7 +142,6 @@ class EstudianteController extends Controller
 
     public function update(Request $request, $dni)
     {
-        // Busca al estudiante por DNI en lugar de ID
         $estudiante = Estudiante::where('dni', $dni)->first();
 
         if (!$estudiante) {
@@ -188,9 +187,9 @@ class EstudianteController extends Controller
 
 
 
-    public function updateParcial(Request $request, $id)
+    public function updateParcial(Request $request, $dni)
     {
-        $Estudiante = Estudiante::find($id);
+        $Estudiante = Estudiante::where('dni', $dni)->first();
 
         if (!$Estudiante) {
             $data = [

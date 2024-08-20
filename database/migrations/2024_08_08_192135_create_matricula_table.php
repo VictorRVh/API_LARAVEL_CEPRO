@@ -21,7 +21,7 @@ return new class extends Migration
             //$table->string('docente_id', 8)->nullable();
             $table->string('numero_recibo', 10)->unique();
             //$table->dateTime('fecha_matricula')->nullable();
-            $table->foreign('codigo_estudiante_id')->references('dni')->on('estudiante');
+            $table->foreign('codigo_estudiante_id')->references('dni')->on('estudiante')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('programa_estudio_id')->references('programa_estudio')->on('especialidad');
             //$table->foreign('docente_id')->references('dni')->on('docente');
             $table->timestamps();
