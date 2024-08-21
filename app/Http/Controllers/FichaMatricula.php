@@ -133,7 +133,7 @@ class FichaMatricula extends Controller
         $fechaFin = $especialidad->unidadesDidacticas->max('fecha_final');
 
         // Mapear los estudiantes y aplicar el formato a los nombres
-        $estudiantes = $matriculas->values()->map(function ($matricula) {
+        $estudiantes = $matriculas->map(function ($matricula) {
             $nombreFormateado = $this->formatName(
                 $matricula->estudiante->apellido_paterno,
                 $matricula->estudiante->apellido_materno,
@@ -143,19 +143,26 @@ class FichaMatricula extends Controller
             return [
                 'codigo_matricula' => $matricula->codigo_estudiante_id,
                 'condicion' => $matricula->condicion,
+                'turno' => $matricula->turno,
                 'apellidos_nombres' => $nombreFormateado,
                 'sexo' => $matricula->estudiante->sexo,
                 'fecha_nacimiento' => $matricula->estudiante->fecha_nacimiento,
             ];
-        })->toArray(); // Convertir a arreglo
+        })
+            ->sortBy('apellidos_nombres') // Ordenar por apellidos_nombres, que incluye apellido_paterno
+            ->values() // Asegurar que se mantenga el índice secuencial después de ordenar
+            ->toArray(); // Convertir a arreglo
 
         // Contar el número de hombres y mujeres
         $sexoCount = collect($estudiantes)->countBy('sexo');
 
+        // Contar el número de estudiantes por condición
+        $condicionCount = collect($estudiantes)->countBy('condicion');
+
         $response = [
             'nombre_especialidad' => $especialidad->programa_estudio,
             'modulo_formativo' => $especialidad->modulo_formativo,
-            'turno' => $especialidad->turno,
+            'turno' => $turno,
             'seccion' => $especialidad->seccion,
             'total_unidades_didacticas' => $totalUnidadesDidacticas,
             'suma_creditos' => $sumaCreditos,
@@ -163,11 +170,15 @@ class FichaMatricula extends Controller
             'fecha_fin' => $fechaFin,
             'numero_hombres' => $sexoCount->get('M', 0),
             'numero_mujeres' => $sexoCount->get('F', 0),
-            'estudiantes' => $estudiantes // Ahora es un arreglo
+            'condicion_g' => $condicionCount->get('G', 0),
+            'condicion_p' => $condicionCount->get('P', 0),
+            'condicion_b' => $condicionCount->get('B', 0),
+            'estudiantes' => $estudiantes
         ];
 
         return response()->json($response);
     }
+
 
 
     public function getRegistroMatriculaPorNombre($nombreEspecialidad)
@@ -180,10 +191,14 @@ class FichaMatricula extends Controller
             return response()->json(['error' => 'Especialidad no encontrada'], 404);
         }
 
+        $estudiantesOrdenados = $especialidad->matriculas->sortBy(function ($matricula) {
+            return strtolower($matricula->estudiante->apellido_paterno);
+        })->values(); // Reindexa la colección después de ordenarla
+
         $response = [
             'nombre_especialidad' => $especialidad->programa_estudio,
             'modulo_formativo' => $especialidad->modulo_formativo,
-            'estudiantes' => $especialidad->matriculas->map(function ($matricula) {
+            'estudiantes' => $estudiantesOrdenados->map(function ($matricula) {
                 return [
                     'codigo_estudiante' => $matricula->estudiante->codigo_estudiante,
                     'dni' => $matricula->estudiante->dni,

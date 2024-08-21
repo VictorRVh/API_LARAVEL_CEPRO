@@ -14,9 +14,6 @@ use App\Http\Controllers\Api\IndicadorLogroController;
 use App\Http\Controllers\Api\MatriculaController;
 use App\Http\Controllers\api\ExperienciaFormativaController;
 use App\Http\Controllers\FichaMatricula;
-use App\Http\Controllers\PDFController;
-use App\Http\Controllers\NominaNormalController;
-use App\Http\Controllers\NominaUgelController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -85,13 +82,6 @@ Route::get('/experiencia_formativa/{id}',[ExperienciaFormativaController::class,
 Route::post('/experiencia_formativa',[ExperienciaFormativaController::class,'store']);
 Route::put('/experiencia_formativa/{id}',[ExperienciaFormativaController::class, 'update']);
 Route::delete('/experiencia_formativa/{id}',[ExperienciaFormativaController::class, 'destroy']);
-
-
-// REPORTE EN PDF
-
-Route::get('/generate-nomina-pdf', [PDFController::class, 'generateNominaPDF']);
-Route::get('/nominaNormal-pdf', [NominaNormalController::class, 'generateNominaPDF']);
-Route::get('/generate-pdf', [NominaUgelController::class, 'generatePDF']);
 
 
 // API PARA FICHA DE MATRICULA
