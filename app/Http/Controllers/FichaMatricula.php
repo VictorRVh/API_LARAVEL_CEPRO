@@ -9,6 +9,21 @@ use App\Models\Matricula;
 
 class FichaMatricula extends Controller
 {
+
+    private function formatName($apellidoPaterno, $apellidoMaterno, $nombres)
+    {
+        // Formatear apellidos en mayúsculas
+        $apellidos = strtoupper($apellidoPaterno) . ' ' . strtoupper($apellidoMaterno);
+
+        // Formatear nombres con solo la inicial en mayúscula
+        $nombresFormateados = collect(explode(' ', $nombres))
+            ->map(fn($nombre) => ucfirst(strtolower($nombre)))
+            ->implode(' ');
+
+        // Concatenar apellidos y nombres
+        return "{$apellidos}, {$nombresFormateados}";
+    }
+
     public function getEstudianteWithEspecialidadAndUnidades($codigoEstudiante)
     {
         // Obtener todas las matrículas del estudiante
@@ -39,15 +54,31 @@ class FichaMatricula extends Controller
         $totalCreditos = $unidadesDidacticas->sum('credito_unidad');
         $totalHoras = $unidadesDidacticas->sum('hora');
 
+        // Formatear el nombre completo del estudiante
+        $nombreEstudiante = $this->formatName(
+            $matriculaReciente->estudiante->apellido_paterno,
+            $matriculaReciente->estudiante->apellido_materno,
+            $matriculaReciente->estudiante->nombre
+        );
+
+        // Formatear el nombre completo del docente
+        $nombreDocente = $especialidad->docente
+            ? $this->formatName(
+                $especialidad->docente->apellido_paterno,
+                $especialidad->docente->apellido_materno,
+                $especialidad->docente->nombre
+            )
+            : 'No disponible';
+
         // Mapea la información que deseas enviar en la respuesta
         $response = [
             'codigo_estudiante' => $matriculaReciente->codigo_estudiante_id,
-            'nombre_completo' => $matriculaReciente->estudiante->nombre . ' ' . $matriculaReciente->estudiante->apellido_paterno . ' ' . $matriculaReciente->estudiante->apellido_materno,
+            'nombre_completo' => $nombreEstudiante,
             'correo' => $matriculaReciente->estudiante->correo,
             'dni' => $matriculaReciente->estudiante->dni,
             'especialidad' => [
                 'nombre' => $especialidad->programa_estudio,
-                'docente' => $especialidad->docente ? $especialidad->docente->nombre . ' ' . $especialidad->docente->apellido_paterno . ' ' . $especialidad->docente->apellido_materno : 'No disponible',
+                'docente' => $nombreDocente,
                 'modalidad' => $especialidad->modalidad,
                 'ciclo_formativo' => $especialidad->ciclo_formativo,
                 'modulo_formativo' => $especialidad->modulo_formativo,
@@ -78,7 +109,6 @@ class FichaMatricula extends Controller
         return response()->json($response);
     }
 
-
     public function getEstudiantesPorEspecialidad($especialidadId, $turno)
     {
         $especialidad = Especialidad::with(['matriculas.estudiante', 'unidadesDidacticas'])
@@ -102,16 +132,25 @@ class FichaMatricula extends Controller
         $fechaInicio = $especialidad->unidadesDidacticas->min('fecha_inicio');
         $fechaFin = $especialidad->unidadesDidacticas->max('fecha_final');
 
-        // Asegúrate de que 'estudiantes' siempre sea un arreglo
-        $estudiantes = $matriculas->map(function ($matricula) {
+        // Mapear los estudiantes y aplicar el formato a los nombres
+        $estudiantes = $matriculas->values()->map(function ($matricula) {
+            $nombreFormateado = $this->formatName(
+                $matricula->estudiante->apellido_paterno,
+                $matricula->estudiante->apellido_materno,
+                $matricula->estudiante->nombre
+            );
+
             return [
                 'codigo_matricula' => $matricula->codigo_estudiante_id,
                 'condicion' => $matricula->condicion,
-                'apellidos_nombres' => $matricula->estudiante->apellido_paterno . ' ' . $matricula->estudiante->apellido_materno . ' ' . $matricula->estudiante->nombre,
+                'apellidos_nombres' => $nombreFormateado,
                 'sexo' => $matricula->estudiante->sexo,
                 'fecha_nacimiento' => $matricula->estudiante->fecha_nacimiento,
             ];
-        })->values()->toArray(); // Convertir a arreglo
+        })->toArray(); // Convertir a arreglo
+
+        // Contar el número de hombres y mujeres
+        $sexoCount = collect($estudiantes)->countBy('sexo');
 
         $response = [
             'nombre_especialidad' => $especialidad->programa_estudio,
@@ -122,7 +161,9 @@ class FichaMatricula extends Controller
             'suma_creditos' => $sumaCreditos,
             'fecha_inicio' => $fechaInicio,
             'fecha_fin' => $fechaFin,
-            'estudiantes' => $estudiantes // Asegúrate de que esto siempre sea un arreglo
+            'numero_hombres' => $sexoCount->get('M', 0),
+            'numero_mujeres' => $sexoCount->get('F', 0),
+            'estudiantes' => $estudiantes // Ahora es un arreglo
         ];
 
         return response()->json($response);
