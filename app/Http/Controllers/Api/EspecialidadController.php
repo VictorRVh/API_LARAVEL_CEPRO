@@ -46,7 +46,7 @@ class EspecialidadController extends Controller
                 'periodo_academico' => $especialidad->periodo_academico,
                 'hora_semanal' => $especialidad->hora_semanal,
                 'seccion' => $especialidad->seccion,
-                'turno' => $especialidad->turno
+               
             ];
         });
 
@@ -70,7 +70,18 @@ class EspecialidadController extends Controller
             'periodo_academico' => 'string|max:10|nullable',
             'hora_semanal' => 'integer|nullable',
             'seccion' => 'string|max:5|nullable',
-            'turno' => 'string|max:1|nullable'
+            
+        ],[
+            'programa_estudio.required' => 'El campo programa de estudio es obligatorio.',
+            'programa_estudio.string' => 'El campo programa de estudio debe ser un texto.',
+            'programa_estudio.max' => 'El campo programa de estudio no debe tener más de :max caracteres.',
+            'ciclo_formativo.max' => 'El campo ciclo formativo no debe tener más de :max caracteres.',
+            'modalidad.max' => 'El campo modalidad no debe tener más de :max caracteres.',
+            'modulo_formativo.max' => 'El campo módulo formativo no debe tener más de :max caracteres.',
+            'docente_id.exists' => 'El docente no existe en la base de datos.',
+            'hora_semanal.integer' => 'El campo horas semanales debe ser un número entero.',
+            'seccion.max' => 'El campo sección no debe tener más de :max caracteres.',
+            
         ]);
 
         if ($validator->fails()) {
@@ -140,7 +151,6 @@ class EspecialidadController extends Controller
             'periodo_academico' => $especialidad->periodo_academico,
             'hora_semanal' => $especialidad->hora_semanal,
             'seccion' => $especialidad->seccion,
-            'turno' => $especialidad->turno,
             'status' => 200
         ];
 
@@ -196,8 +206,18 @@ class EspecialidadController extends Controller
             'docente_id' => 'string|max:8|nullable|exists:docente,dni',
             'periodo_academico' => 'string|max:10|nullable',
             'hora_semanal' => 'integer|nullable',
-            'seccion' => 'string|max:5|nullable',
-            'turno' => 'string|max:1|nullable'
+            'seccion' => 'string|max:5|nullable'
+    
+        ],[
+            'programa_estudio.string' => 'El campo programa de estudio debe ser un texto.',
+            'programa_estudio.max' => 'El campo programa de estudio no debe tener más de :max caracteres.',
+            'ciclo_formativo.max' => 'El campo ciclo formativo no debe tener más de :max caracteres.',
+            'modalidad.max' => 'El campo modalidad no debe tener más de :max caracteres.',
+            'modulo_formativo.max' => 'El campo módulo formativo no debe tener más de :max caracteres.',
+            'docente_id.exists' => 'El docente no existe en la base de datos.',
+            'hora_semanal.integer' => 'El campo horas semanales debe ser un número entero.',
+            'seccion.max' => 'El campo sección no debe tener más de :max caracteres.',
+            
         ]);
 
         if ($validator->fails()) {
@@ -249,6 +269,16 @@ class EspecialidadController extends Controller
             'periodo_academico' => 'string|max:10|nullable',
             'hora_semanal' => 'integer|nullable',
             'seccion' => 'string|max:5|nullable'
+        ],[
+            'programa_estudio.string' => 'El campo programa de estudio debe ser un texto.',
+            'programa_estudio.max' => 'El campo programa de estudio no debe tener más de :max caracteres.',
+            'ciclo_formativo.max' => 'El campo ciclo formativo no debe tener más de :max caracteres.',
+            'modalidad.max' => 'El campo modalidad no debe tener más de :max caracteres.',
+            'modulo_formativo.max' => 'El campo módulo formativo no debe tener más de :max caracteres.',
+            'docente_id.exists' => 'El docente no existe en la base de datos.',
+            'hora_semanal.integer' => 'El campo horas semanales debe ser un número entero.',
+            'seccion.max' => 'El campo sección no debe tener más de :max caracteres.',
+            
         ]);
 
         if ($validator->fails()) {

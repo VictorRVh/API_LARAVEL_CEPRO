@@ -41,6 +41,25 @@ class MatriculaController extends Controller
             'condicion' => 'required|string|max:1',
             'programa_estudio_id' => 'required|string|max:100|exists:especialidad,programa_estudio',
             'numero_recibo' => 'required|string|max:10|unique:matricula',
+        ], [
+            'codigo_estudiante_id.required' => 'El campo código de estudiante es obligatorio.',
+            'codigo_estudiante_id.string' => 'El campo código de estudiante debe ser un texto.',
+            'codigo_estudiante_id.max' => 'El campo código de estudiante no debe exceder los :max caracteres.',
+            'codigo_estudiante_id.exists' => 'El código de estudiante no existe en la base de datos.',
+            'turno.required' => 'El campo turno es obligatorio.',
+            'turno.string' => 'El campo turno debe ser un texto.',
+            'turno.max' => 'El campo turno no debe exceder los :max caracteres.',
+            'condicion.required' => 'El campo condición es obligatorio.',
+            'condicion.string' => 'El campo condición debe ser un texto.',
+            'condicion.max' => 'El campo condición no debe exceder los :max caracteres.',
+            'programa_estudio_id.required' => 'El campo programa de estudio es obligatorio.',
+            'programa_estudio_id.string' => 'El campo programa de estudio debe ser un texto.',
+            'programa_estudio_id.max' => 'El campo programa de estudio no debe exceder los :max caracteres.',
+            'programa_estudio_id.exists' => 'El programa de estudio no existe en la base de datos.',
+            'numero_recibo.required' => 'El campo número de recibo es obligatorio.',
+            'numero_recibo.string' => 'El campo número de recibo debe ser un texto.',
+            'numero_recibo.max' => 'El campo número de recibo no debe exceder los :max caracteres.',
+            'numero_recibo.unique' => 'El número de recibo ya está registrado.'
         ]);
 
         if ($validator->fails()) {
@@ -138,6 +157,21 @@ class MatriculaController extends Controller
             'condicion' => 'string|max:1',
             'programa_estudio_id' => 'string|max:100|exists:especialidad,programa_estudio',
             'numero_recibo' => 'string|max:10|unique:matricula',
+        ], [
+            'codigo_estudiante_id.string' => 'El código de estudiante debe ser un texto.',
+            'codigo_estudiante_id.max' => 'El código de estudiante no debe exceder los :max caracteres.',
+            'codigo_estudiante_id.exists' => 'El código de estudiante no existe en la base de datos.',
+            'codigo_estudiante_id.unique' => 'El código de estudiante ya está registrado en una matrícula.',
+            'turno.string' => 'El turno debe ser un texto.',
+            'turno.max' => 'El turno no debe exceder los :max caracteres.',
+            'condicion.string' => 'La condición debe ser un texto.',
+            'condicion.max' => 'La condición no debe exceder los :max caracteres.',
+            'programa_estudio_id.string' => 'El programa de estudio debe ser un texto.',
+            'programa_estudio_id.max' => 'El programa de estudio no debe exceder los :max caracteres.',
+            'programa_estudio_id.exists' => 'El programa de estudio no existe en la base de datos.',
+            'numero_recibo.string' => 'El número de recibo debe ser un texto.',
+            'numero_recibo.max' => 'El número de recibo no debe exceder los :max caracteres.',
+            'numero_recibo.unique' => 'El número de recibo ya está registrado en una matrícula.'
         ]);
 
         if ($validator->fails()) {
@@ -178,6 +212,21 @@ class MatriculaController extends Controller
             'condicion' => 'string|max:1',
             'programa_estudio_id' => 'string|max:100|exists:especialidad,programa_estudio',
             'numero_recibo' => 'string|max:10|unique:matricula',
+        ], [
+            'codigo_estudiante_id.string' => 'El código de estudiante debe ser un texto.',
+            'codigo_estudiante_id.max' => 'El código de estudiante no debe exceder los :max caracteres.',
+            'codigo_estudiante_id.exists' => 'El código de estudiante no existe en la base de datos.',
+            'codigo_estudiante_id.unique' => 'El código de estudiante ya está registrado en una matrícula.',
+            'turno.string' => 'El turno debe ser un texto.',
+            'turno.max' => 'El turno no debe exceder los :max caracteres.',
+            'condicion.string' => 'La condición debe ser un texto.',
+            'condicion.max' => 'La condición no debe exceder los :max caracteres.',
+            'programa_estudio_id.string' => 'El programa de estudio debe ser un texto.',
+            'programa_estudio_id.max' => 'El programa de estudio no debe exceder los :max caracteres.',
+            'programa_estudio_id.exists' => 'El programa de estudio no existe en la base de datos.',
+            'numero_recibo.string' => 'El número de recibo debe ser un texto.',
+            'numero_recibo.max' => 'El número de recibo no debe exceder los :max caracteres.',
+            'numero_recibo.unique' => 'El número de recibo ya está registrado en una matrícula.'
         ]);
 
         if ($validator->fails()) {

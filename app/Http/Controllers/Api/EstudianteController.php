@@ -51,6 +51,14 @@ class EstudianteController extends Controller
             'celular' => 'required|string|max:9',
             'correo' => 'required|string|email|max:60|unique:estudiante,correo',
             'fecha_nacimiento' => 'required|date'
+        ],[
+            'dni.unique' => 'El DNI ya está registrado.',
+            'correo.unique' => 'El correo electrónico ya está registrado.',
+            'required' => 'El campo :attribute es obligatorio.',
+            'string' => 'El campo :attribute debe ser un texto.',
+            'max' => 'El campo :attribute no debe tener más de :max caracteres.',
+            'email' => 'El campo :attribute debe ser un correo electrónico válido.',
+            'date' => 'El campo :attribute debe ser una fecha válida.'
         ]);
 
         if ($validator->fails()) {
@@ -162,6 +170,15 @@ class EstudianteController extends Controller
             'celular' => 'string|max:9',
             'correo' => 'string|email|max:60|unique:estudiante,correo,' . $estudiante->id,
             'fecha_nacimiento' => 'date'
+        ], [
+            'codigo_estudiante.unique' => 'El código de estudiante ya está registrado.',
+            'dni.unique' => 'El DNI ya está registrado.',
+            'correo.unique' => 'El correo electrónico ya está registrado.',
+            'required' => 'El campo :attribute es obligatorio.',
+            'string' => 'El campo :attribute debe ser un texto.',
+            'max' => 'El campo :attribute no debe tener más de :max caracteres.',
+            'email' => 'El campo :attribute debe ser un correo electrónico válido.',
+            'date' => 'El campo :attribute debe ser una fecha válida.'
         ]);
 
         if ($validator->fails()) {
@@ -210,6 +227,15 @@ class EstudianteController extends Controller
             'celular' => 'string|max:9',
             'correo' => 'string|email|max:60|unique:estudiante,correo',
             'fecha_nacimiento' => 'date'
+        ], [
+            'codigo_estudiante.unique' => 'El código de estudiante ya está registrado.',
+            'dni.unique' => 'El DNI ya está registrado.',
+            'correo.unique' => 'El correo electrónico ya está registrado.',
+            'required' => 'El campo :attribute es obligatorio.',
+            'string' => 'El campo :attribute debe ser un texto.',
+            'max' => 'El campo :attribute no debe tener más de :max caracteres.',
+            'email' => 'El campo :attribute debe ser un correo electrónico válido.',
+            'date' => 'El campo :attribute debe ser una fecha válida.'
         ]);
 
         if ($validator->fails()) {

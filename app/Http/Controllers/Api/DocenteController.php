@@ -71,6 +71,33 @@ class DocenteController extends Controller
             'celular' => 'required|string|max:9',
             'correo' => 'required|string|email|max:255|unique:docente',
             'fecha_nacimiento' => 'required|date'
+        ], [
+            'nombre.required' => 'El campo nombre es obligatorio.',
+            'nombre.string' => 'El campo nombre debe ser un texto.',
+            'nombre.max' => 'El campo nombre no debe tener más de :max caracteres.',
+            'apellido_paterno.required' => 'El campo apellido paterno es obligatorio.',
+            'apellido_paterno.string' => 'El campo apellido paterno debe ser un texto.',
+            'apellido_paterno.max' => 'El campo apellido paterno no debe tener más de :max caracteres.',
+            'apellido_materno.required' => 'El campo apellido materno es obligatorio.',
+            'apellido_materno.string' => 'El campo apellido materno debe ser un texto.',
+            'apellido_materno.max' => 'El campo apellido materno no debe tener más de :max caracteres.',
+            'dni.required' => 'El campo DNI es obligatorio.',
+            'dni.string' => 'El campo DNI debe ser un texto.',
+            'dni.max' => 'El campo DNI no debe tener más de :max caracteres.',
+            'dni.unique' => 'El DNI ya está registrado.',
+            'sexo.required' => 'El campo sexo es obligatorio.',
+            'sexo.string' => 'El campo sexo debe ser un texto.',
+            'sexo.max' => 'El campo sexo no debe tener más de :max caracteres.',
+            'celular.required' => 'El campo celular es obligatorio.',
+            'celular.string' => 'El campo celular debe ser un texto.',
+            'celular.max' => 'El campo celular no debe tener más de :max caracteres.',
+            'correo.required' => 'El campo correo es obligatorio.',
+            'correo.string' => 'El campo correo debe ser un texto.',
+            'correo.email' => 'El campo correo debe ser una dirección de correo válida.',
+            'correo.max' => 'El campo correo no debe tener más de :max caracteres.',
+            'correo.unique' => 'El correo ya está registrado.',
+            'fecha_nacimiento.required' => 'El campo fecha de nacimiento es obligatorio.',
+            'fecha_nacimiento.date' => 'El campo fecha de nacimiento debe ser una fecha válida.'
         ]);
 
         if ($validator->fails()) {
@@ -141,6 +168,24 @@ class DocenteController extends Controller
             'sexo' => 'string|max:1',
             'celular' => 'string|max:9',
             'correo' => 'string|email|max:255|unique:docente,correo,' . $teacher->id
+        ], [
+            'nombre.string' => 'El campo nombre debe ser un texto.',
+            'nombre.max' => 'El campo nombre no debe exceder los :max caracteres.',
+            'apellido_paterno.string' => 'El campo apellido paterno debe ser un texto.',
+            'apellido_paterno.max' => 'El campo apellido paterno no debe exceder los :max caracteres.',
+            'apellido_materno.string' => 'El campo apellido materno debe ser un texto.',
+            'apellido_materno.max' => 'El campo apellido materno no debe exceder los :max caracteres.',
+            'dni.string' => 'El campo DNI debe ser un texto.',
+            'dni.max' => 'El campo DNI no debe exceder los :max caracteres.',
+            'dni.unique' => 'El DNI ya está registrado para otro docente.',
+            'sexo.string' => 'El campo sexo debe ser un texto.',
+            'sexo.max' => 'El campo sexo no debe exceder los :max caracteres.',
+            'celular.string' => 'El campo celular debe ser un texto.',
+            'celular.max' => 'El campo celular no debe exceder los :max caracteres.',
+            'correo.string' => 'El campo correo debe ser un texto.',
+            'correo.email' => 'El campo correo debe ser una dirección de correo válida.',
+            'correo.max' => 'El campo correo no debe exceder los :max caracteres.',
+            'correo.unique' => 'El correo ya está registrado para otro docente.'
         ]);
 
         if ($validator->fails()) {
@@ -208,6 +253,24 @@ class DocenteController extends Controller
             'sexo' => 'string|max:1',
             'celular' => 'string|max:9',
             'correo' => 'string|email|max:255|unique:docente,correo,' . $dni
+        ], [
+            'nombre.string' => 'El campo nombre debe ser un texto.',
+            'nombre.max' => 'El campo nombre no debe exceder los :max caracteres.',
+            'apellido_paterno.string' => 'El campo apellido paterno debe ser un texto.',
+            'apellido_paterno.max' => 'El campo apellido paterno no debe exceder los :max caracteres.',
+            'apellido_materno.string' => 'El campo apellido materno debe ser un texto.',
+            'apellido_materno.max' => 'El campo apellido materno no debe exceder los :max caracteres.',
+            'dni.string' => 'El campo DNI debe ser un texto.',
+            'dni.max' => 'El campo DNI no debe exceder los :max caracteres.',
+            'dni.unique' => 'El DNI ya está registrado para otro docente.',
+            'sexo.string' => 'El campo sexo debe ser un texto.',
+            'sexo.max' => 'El campo sexo no debe exceder los :max caracteres.',
+            'celular.string' => 'El campo celular debe ser un texto.',
+            'celular.max' => 'El campo celular no debe exceder los :max caracteres.',
+            'correo.string' => 'El campo correo debe ser un texto.',
+            'correo.email' => 'El campo correo debe ser una dirección de correo válida.',
+            'correo.max' => 'El campo correo no debe exceder los :max caracteres.',
+            'correo.unique' => 'El correo ya está registrado para otro docente.'
         ]);
 
         if ($validator->fails()) {
