@@ -158,9 +158,9 @@ class EspecialidadController extends Controller
 
     public function destroy($id)
     {
-        $specialties = Especialidad::find($id);
+        $especialidad = Especialidad::where('id_unidad', $id)->first();
 
-        if (!$specialties) {
+        if (!$especialidad) {
             $data = [
                 'message' => 'Especialidad no encontrada',
                 'status' => 404
@@ -169,15 +169,21 @@ class EspecialidadController extends Controller
             return response()->json($data, 404);
         }
 
-        $specialties->delete();
+        $especialidad->unidadesDidacticas()->each(function ($unidadDidactica) {
+            $unidadDidactica->indicadoresLogro()->delete();
+            $unidadDidactica->delete();
+        });
+
+        $especialidad->delete();
 
         $data = [
-            'message' => 'Especialidad eliminada',
+            'message' => 'Especialidad eliminada junto con sus unidades didácticas e indicadores de logro asociados',
             'status' => 200
         ];
 
         return response()->json($data, 200);
     }
+
 
     public function update(Request $request, $id_unidad)
     {
