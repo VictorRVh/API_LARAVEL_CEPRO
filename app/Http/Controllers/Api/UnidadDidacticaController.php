@@ -105,20 +105,19 @@ class UnidadDidacticaController extends Controller
         return response()->json($data, 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_indicador)
     {
-        $unidadDidactica = UnidadDidactica::find($id);
+        $unidadDidactica = UnidadDidactica::where('id_indicador', $id_indicador)->first();
 
         if (!$unidadDidactica) {
-            $data = [
+            return response()->json([
                 'message' => 'Unidad didáctica no encontrada',
                 'status' => 404
-            ];
-            return response()->json($data, 404);
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
-            'id_indicador' => 'string|max:4|unique:unidad_didactica,id_indicador,' . $id,
+            'id_indicador' => 'string|max:8|unique:unidad_didactica,id_indicador,' . $unidadDidactica->id,
             'especialidad_id' => 'nullable|string|max:4|exists:especialidad,id_unidad',
             'nombre_unidad' => 'nullable|string|max:130',
             'fecha_inicio' => 'nullable|date',
@@ -130,24 +129,30 @@ class UnidadDidacticaController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $data = [
+            return response()->json([
                 'message' => 'Error en la validación de los datos',
                 'errors' => $validator->errors(),
                 'status' => 400
-            ];
-            return response()->json($data, 400);
+            ], 400);
         }
 
-        $unidadDidactica->update($request->all());
+        try {
+            $unidadDidactica->update($request->all());
 
-        $data = [
-            'message' => 'Unidad didáctica actualizada',
-            'unidad_didactica' => $unidadDidactica,
-            'status' => 200
-        ];
-
-        return response()->json($data, 200);
+            return response()->json([
+                'message' => 'Unidad didáctica actualizada',
+                'unidad_didactica' => $unidadDidactica,
+                'status' => 200
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar la unidad didáctica',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
     }
+
     public function updateParcial(Request $request, $id)
     {
         $unidadDidactica = UnidadDidactica::find($id);
@@ -233,23 +238,22 @@ class UnidadDidacticaController extends Controller
 
     public function destroy($id)
     {
-        $unidadDidactica = UnidadDidactica::find($id);
+        $unidadDidactica = UnidadDidactica::where('id_indicador', $id)->first();
 
         if (!$unidadDidactica) {
-            $data = [
+            return response()->json([
                 'message' => 'Unidad didáctica no encontrada',
                 'status' => 404
-            ];
-            return response()->json($data, 404);
+            ], 404);
         }
+
+        $unidadDidactica->indicadoresLogro()->delete();
 
         $unidadDidactica->delete();
 
-        $data = [
-            'message' => 'Unidad didáctica eliminada',
+        return response()->json([
+            'message' => 'Unidad didáctica e indicadores de logro eliminados',
             'status' => 200
-        ];
-
-        return response()->json($data, 200);
+        ], 200);
     }
 }

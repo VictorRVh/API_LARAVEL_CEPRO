@@ -26,4 +26,10 @@ class UnidadDidactica extends Model
     {
         return $this->belongsTo(Especialidad::class, 'especialidad_id', 'id_unidad');
     }
+
+    public function indicadoresLogro()
+    {
+        return $this->hasMany(IndicadorLogro::class, 'unidad_didactica_id', 'id_indicador');
+    }
+
 }

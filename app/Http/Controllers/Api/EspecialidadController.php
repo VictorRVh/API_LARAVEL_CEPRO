@@ -17,9 +17,7 @@ use Illuminate\Validation\Rule;
 class EspecialidadController extends Controller
 {
     //
-    public function NameEspecialidad(){
-        
-    }
+    public function NameEspecialidad() {}
     public function index()
     {
         $specialties = Especialidad::with('docente')->get();
@@ -46,14 +44,14 @@ class EspecialidadController extends Controller
                 'periodo_academico' => $especialidad->periodo_academico,
                 'hora_semanal' => $especialidad->hora_semanal,
                 'seccion' => $especialidad->seccion,
-               
+
             ];
         });
 
-         $data = [
+        $data = [
             'especialidades' => $specialties,
             'status' => 200
-         ];
+        ];
 
         return response()->json($data, 200);
     }
@@ -70,8 +68,8 @@ class EspecialidadController extends Controller
             'periodo_academico' => 'string|max:10|nullable',
             'hora_semanal' => 'integer|nullable',
             'seccion' => 'string|max:5|nullable',
-            
-        ],[
+
+        ], [
             'programa_estudio.required' => 'El campo programa de estudio es obligatorio.',
             'programa_estudio.string' => 'El campo programa de estudio debe ser un texto.',
             'programa_estudio.max' => 'El campo programa de estudio no debe tener más de :max caracteres.',
@@ -81,7 +79,7 @@ class EspecialidadController extends Controller
             'docente_id.exists' => 'El docente no existe en la base de datos.',
             'hora_semanal.integer' => 'El campo horas semanales debe ser un número entero.',
             'seccion.max' => 'El campo sección no debe tener más de :max caracteres.',
-            
+
         ]);
 
         if ($validator->fails()) {
@@ -181,9 +179,10 @@ class EspecialidadController extends Controller
         return response()->json($data, 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_unidad)
     {
-        $especialidad = Especialidad::find($id);
+        // Buscar la especialidad por id_unidad en lugar de id
+        $especialidad = Especialidad::where('id_unidad', $id_unidad)->first();
 
         if (!$especialidad) {
             return response()->json([
@@ -197,7 +196,7 @@ class EspecialidadController extends Controller
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('especialidad', 'programa_estudio')->ignore($id)
+                Rule::unique('especialidad', 'programa_estudio')->ignore($especialidad->id)
             ],
             'ciclo_formativo' => 'string|max:50|nullable',
             'modalidad' => 'string|max:45|nullable',
@@ -207,8 +206,7 @@ class EspecialidadController extends Controller
             'periodo_academico' => 'string|max:10|nullable',
             'hora_semanal' => 'integer|nullable',
             'seccion' => 'string|max:5|nullable'
-    
-        ],[
+        ], [
             'programa_estudio.string' => 'El campo programa de estudio debe ser un texto.',
             'programa_estudio.max' => 'El campo programa de estudio no debe tener más de :max caracteres.',
             'ciclo_formativo.max' => 'El campo ciclo formativo no debe tener más de :max caracteres.',
@@ -217,7 +215,6 @@ class EspecialidadController extends Controller
             'docente_id.exists' => 'El docente no existe en la base de datos.',
             'hora_semanal.integer' => 'El campo horas semanales debe ser un número entero.',
             'seccion.max' => 'El campo sección no debe tener más de :max caracteres.',
-            
         ]);
 
         if ($validator->fails()) {
@@ -245,6 +242,7 @@ class EspecialidadController extends Controller
         }
     }
 
+
     public function updateParcial(Request $request, $id)
     {
         $specialties = Especialidad::find($id);
@@ -269,7 +267,7 @@ class EspecialidadController extends Controller
             'periodo_academico' => 'string|max:10|nullable',
             'hora_semanal' => 'integer|nullable',
             'seccion' => 'string|max:5|nullable'
-        ],[
+        ], [
             'programa_estudio.string' => 'El campo programa de estudio debe ser un texto.',
             'programa_estudio.max' => 'El campo programa de estudio no debe tener más de :max caracteres.',
             'ciclo_formativo.max' => 'El campo ciclo formativo no debe tener más de :max caracteres.',
@@ -278,7 +276,7 @@ class EspecialidadController extends Controller
             'docente_id.exists' => 'El docente no existe en la base de datos.',
             'hora_semanal.integer' => 'El campo horas semanales debe ser un número entero.',
             'seccion.max' => 'El campo sección no debe tener más de :max caracteres.',
-            
+
         ]);
 
         if ($validator->fails()) {
