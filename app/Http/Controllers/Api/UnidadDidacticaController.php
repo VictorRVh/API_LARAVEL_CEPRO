@@ -32,8 +32,8 @@ class UnidadDidacticaController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'especialidad_id' => 'nullable|string|max:4|exists:especialidad,id_unidad',
-            'nombre_unidad' => 'nullable|string|max:130',
+            'especialidad_id' => 'required|string|max:4|exists:especialidad,id_unidad',
+            'nombre_unidad' => 'required|string|max:130',
             'fecha_inicio' => 'nullable|date',
             'fecha_final' => 'nullable|date',
             'credito_unidad' => 'nullable|integer',
