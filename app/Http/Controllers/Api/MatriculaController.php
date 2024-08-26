@@ -63,9 +63,13 @@ class MatriculaController extends Controller
         ]);
 
         if ($validator->fails()) {
+            $errors = $validator->errors();
+    
+            // Obtiene el primer error del array de errores
+            $firstError = $errors->first();
+
             return response()->json([
-                'message' => 'Error en la validación de los datos',
-                'errors' => $validator->errors(),
+                'message' => $firstError,
                 'status' => 400
             ], 400);
         }
