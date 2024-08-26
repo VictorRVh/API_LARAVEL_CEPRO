@@ -46,7 +46,7 @@ class IndicadorLogroController extends Controller
         $indicador = IndicadorLogro::create($request->all());
 
         return response()->json([
-            'indicador' => $indicador,
+            'indicador' => $indicador->id,
             'message' => 'Indicador de logro creado correctamente',
             'status' => 201
         ], 201);
