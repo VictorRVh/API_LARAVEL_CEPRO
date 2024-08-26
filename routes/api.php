@@ -14,10 +14,20 @@ use App\Http\Controllers\Api\IndicadorLogroController;
 use App\Http\Controllers\Api\MatriculaController;
 use App\Http\Controllers\api\ExperienciaFormativaController;
 use App\Http\Controllers\FichaMatricula;
+use App\Http\Controllers\UserController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+
+Route::post('/login',[UserController::class,'login']);
+
+// RUTAS PARA USER
+Route::get('/user',[UserController::class,'index']);
+Route::post('/user',[UserController::class,'store']);
+Route::put('/user/{id}',[UserController::class, 'update']);
+Route::delete('/user/{id}',[UserController::class, 'destroy']);
 
 
 // Router student
@@ -95,3 +105,7 @@ Route::get('/registro/estudiantes/{especialidadId}', [FichaMatricula::class, 'ge
 
 // API PARA MOSTRAR DATOS DE ESTUDIANTES POR ESPECIALIDAD
 Route::get('/especialidad/{especialidadId}/students/{turno}', [FichaMatricula::class, 'getEstudiantesPorEspecialidadYTurno']);
+
+// API PARA MOSTRAR REPORTES DE MATRICULAS EN LISTA DE MATRICULADOS
+Route::get('/fichaMatricula/{codigo}/{especialidad}', [FichaMatricula::class, 'getReportePdfMatriculaEspecialidad']);
+

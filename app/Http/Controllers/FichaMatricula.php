@@ -109,6 +109,85 @@ class FichaMatricula extends Controller
         return response()->json($response);
     }
 
+    public function getReportePdfMatriculaEspecialidad($codigoEstudiante, $especialidadId)
+    {
+        // Obtener la matrícula específica del estudiante en la especialidad seleccionada
+        $matricula = Matricula::where('codigo_estudiante_id', $codigoEstudiante)
+            ->where('programa_estudio_id', $especialidadId)
+            ->with(['especialidad.unidadesDidacticas', 'estudiante'])
+            ->first();
+
+        // Si no se encuentra ninguna matrícula, retornar un error
+        if (!$matricula) {
+            return response()->json(['error' => 'Matrícula no encontrada'], 404);
+        }
+
+        // Obtener el estudiante asociado a la matrícula
+        $estudiante = $matricula->estudiante;
+        $nombreEstudiante = $this->formatName(
+            $estudiante->apellido_paterno,
+            $estudiante->apellido_materno,
+            $estudiante->nombre
+        );
+
+        // Obtener la especialidad y las unidades didácticas asociadas
+        $especialidad = $matricula->especialidad;
+        $unidadesDidacticas = $especialidad->unidadesDidacticas;
+
+        // Formatear la información requerida
+        $nombresUnidades = $unidadesDidacticas->pluck('nombre_unidad')->implode(', ');
+        $fechaInicio = $unidadesDidacticas->min('fecha_inicio');
+        $fechaFin = $unidadesDidacticas->max('fecha_final');
+        $totalCreditos = $unidadesDidacticas->sum('credito_unidad');
+        $totalHoras = $unidadesDidacticas->sum('hora');
+
+        $nombreDocente = $especialidad->docente
+            ? $this->formatName(
+                $especialidad->docente->apellido_paterno,
+                $especialidad->docente->apellido_materno,
+                $especialidad->docente->nombre
+            )
+            : 'No disponible';
+
+        // Construir la respuesta en el formato solicitado
+        $response = [
+            'codigo_estudiante' => $estudiante->codigo_estudiante,
+            'nombre_completo' => $nombreEstudiante,
+            'correo' => $estudiante->correo,
+            'dni' => $estudiante->dni,
+            'especialidad' => [
+                'nombre' => $especialidad->programa_estudio,
+                'docente' => $nombreDocente,
+                'modalidad' => $especialidad->modalidad,
+                'ciclo_formativo' => $especialidad->ciclo_formativo,
+                'modulo_formativo' => $especialidad->modulo_formativo,
+                'periodo_academico' => $especialidad->periodo_academico,
+                'hora_semanal' => $especialidad->hora_semanal,
+                'seccion' => $especialidad->seccion,
+                'turno' => $matricula->turno
+            ],
+            'unidades_didacticas' => [
+                'nombres_unidades' => $nombresUnidades,
+                'fecha_inicio' => $fechaInicio,
+                'fecha_fin' => $fechaFin,
+                'total_creditos' => $totalCreditos,
+                'total_horas' => $totalHoras,
+                'detalles' => $unidadesDidacticas->map(function ($unidad) {
+                    return [
+                        'nombre_unidad' => $unidad->nombre_unidad,
+                        'credito_unidad' => $unidad->credito_unidad,
+                        'hora' => $unidad->hora,
+                        'dia' => $unidad->dia,
+                        'fecha_inicio' => $unidad->fecha_inicio,
+                        'fecha_final' => $unidad->fecha_final,
+                    ];
+                })
+            ]
+        ];
+
+        return response()->json($response);
+    }
+
     public function getEstudiantesPorEspecialidad($especialidadId, $turno)
     {
         $especialidad = Especialidad::with(['matriculas.estudiante', 'unidadesDidacticas'])
